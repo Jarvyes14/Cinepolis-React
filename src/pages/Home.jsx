@@ -5,33 +5,37 @@ const movies = [
     category: "B15",
     title: "Misión Rescate",
     description: "Acción y suspenso con una misión contrarreloj.",
-    image: "https://tickets-static-content.cinepolis.com/pimcore/12880/assets/Mexico/Tickets/Movies/ElDiaDelFinDelMundo/Es/Poster_720x1022_G2_92/resource.jpg",
+    image:
+      "https://images.unsplash.com/photo-1596727147705-61a532a659bd?auto=format&fit=crop&w=900&q=80",
   },
   {
     category: "B15",
     title: "Ayuda",
     description: "Drama psicológico con giros inesperados.",
-    image: "https://tickets-static-content.cinepolis.com/pimcore/13029/assets/Mexico/Tickets/Movies/Ayuda/Es/GC_Ayuda_720x1022px_32/resource.jpg",
+    image:
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=80",
   },
   {
     category: "B",
     title: "Aún es de Noche en Caracas",
     description: "Historia intensa sobre identidad y supervivencia.",
-    image: "https://tickets-static-content.cinepolis.com/pimcore/13858/assets/Mexico/Tickets/Movies/AunEsDeNocheEnCaracas/Es/AENC_DESKTOP_P_ster_720x1022px_29/resource.jpg",
+    image:
+      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80",
   },
   {
     category: "B",
     title: "Hamnet",
     description: "Drama histórico sobre amor y pérdida.",
-    image: "https://tickets-static-content.cinepolis.com/pimcore/12398/assets/Mexico/Tickets/Movies/Hamnet/Es/720x1022_px_50/resource.jpg",
+    image:
+      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
 export default function Home() {
   return (
-    <div className="flex flex-col m-10">
-      <h1 className="text-3xl font-semibold text-white mb-6">Cartelera</h1>
-      <div className="flex flex-wrap gap-6 justify-left justify-evenly">
+    <div className="px-4 py-6 sm:px-8 sm:py-8 lg:px-10">
+      <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-6">Cartelera</h1>
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         {movies.map((movie, index) => (
           <Card
             key={index}
