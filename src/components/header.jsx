@@ -21,7 +21,7 @@ export default function Header() {
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3 text-white mr-16">
                     <IconButton icon={faMagnifyingGlass} href="#search" label="Buscar"></IconButton>
-                    <IconButton icon={faUser} href="#search" label="Usuario"></IconButton>
+                    <IconButton icon={faUser} href="/usuario" label="Usuario"></IconButton>
                 </div>
             </div>
 

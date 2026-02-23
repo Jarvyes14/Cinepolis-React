@@ -1,51 +1,51 @@
+import { useState, useEffect } from "react";
 import Card from "../components/card.jsx";
-
-const movies = [
-  {
-    category: "B15",
-    title: "Misión Rescate",
-    description: "Acción y suspenso con una misión contrarreloj.",
-    image:
-      "https://images.unsplash.com/photo-1596727147705-61a532a659bd?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    category: "B15",
-    title: "Ayuda",
-    description: "Drama psicológico con giros inesperados.",
-    image:
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    category: "B",
-    title: "Aún es de Noche en Caracas",
-    description: "Historia intensa sobre identidad y supervivencia.",
-    image:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    category: "B",
-    title: "Hamnet",
-    description: "Drama histórico sobre amor y pérdida.",
-    image:
-      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80",
-  },
-];
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function Cartelera() {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMovies = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "movies"));
+      const moviesData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setMovies(moviesData);
+    } catch (error) {
+      console.error("Error fetching movies: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
+
   return (
     <div className="flex flex-col px-4 py-6 sm:px-8 sm:py-8 lg:px-10 items-center">
       <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-6">Cartelera</h1>
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
-        {movies.map((movie, index) => (
-          <Card
-            key={index}
-            category={movie.category}
-            title={movie.title}
-            description={movie.description}
-            image={movie.image}
-          ></Card>
-        ))}
-      </div>
+      
+      {loading ? (
+        <p className="text-white">Cargando películas...</p>
+      ) : movies.length === 0 ? (
+        <div className="text-center">
+          <p className="text-white mb-4">No hay películas en la base de datos.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+          {movies.map((movie) => (
+            <Card
+              key={movie.id}
+              category={movie.category}
+              title={movie.title}
+              description={movie.description}
+              image={movie.image}
+            ></Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

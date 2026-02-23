@@ -7,6 +7,7 @@ import Alimentos from "./pages/Alimentos.jsx";
 import Otros from "./pages/Otros.jsx";
 import Promos from "./pages/Promos.jsx";
 import Especialidades from "./pages/Especialidades.jsx";
+import Usuario from "./pages/Usuario.jsx";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/otros" element={<Otros />} />
             <Route path="/promos" element={<Promos />} />
             <Route path="/especialidades" element={<Especialidades />} />
+            <Route path="/usuario" element={<Usuario />} />
           </Routes>
         </div>
         <Footer></Footer>

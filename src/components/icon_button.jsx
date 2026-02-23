@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 export default function IconButton({ icon, href, label }) {
     return (
-        <a className="icon-button bg-[#244180] pr-2 pl-2 pt-1 pb-1 rounded-md" href={href} aria-label={label}>
+        <Link className="icon-button bg-[#244180] pr-2 pl-2 pt-1 pb-1 rounded-md" to={href} aria-label={label}>
             <FontAwesomeIcon icon={icon} />
-        </a>
+        </Link>
     );
 }
