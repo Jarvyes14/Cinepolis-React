@@ -9,8 +9,10 @@ import Promos from "./pages/Promos.jsx";
 import Especialidades from "./pages/Especialidades.jsx";
 import Usuario from "./pages/Usuario.jsx";
 import CompraBoletos from "./pages/CompraBoletos.jsx";
+import CompraAlimentos from "./pages/CompraAlimentos.jsx";
 import PeliculaDetalle from "./pages/PeliculaDetalle.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Ticket from "./pages/Ticket.jsx";
 
 function App() {
 
@@ -37,7 +39,9 @@ function App() {
             <Route path="/usuario" element={<Usuario />} />
             <Route path="/pelicula/:id" element={<PeliculaDetalle />} />
             <Route path="/comprar/:id" element={<CompraBoletos />} />
+            <Route path="/comprar-alimentos" element={<CompraAlimentos />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/ticket/:type/:id" element={<Ticket />} />
           </Routes>
         </div>
         <Footer></Footer>
