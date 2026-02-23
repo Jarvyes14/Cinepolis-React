@@ -8,6 +8,8 @@ import Otros from "./pages/Otros.jsx";
 import Promos from "./pages/Promos.jsx";
 import Especialidades from "./pages/Especialidades.jsx";
 import Usuario from "./pages/Usuario.jsx";
+import CompraBoletos from "./pages/CompraBoletos.jsx";
+import PeliculaDetalle from "./pages/PeliculaDetalle.jsx";
 
 function App() {
 
@@ -32,6 +34,8 @@ function App() {
             <Route path="/promos" element={<Promos />} />
             <Route path="/especialidades" element={<Especialidades />} />
             <Route path="/usuario" element={<Usuario />} />
+            <Route path="/pelicula/:id" element={<PeliculaDetalle />} />
+            <Route path="/comprar/:id" element={<CompraBoletos />} />
           </Routes>
         </div>
         <Footer></Footer>

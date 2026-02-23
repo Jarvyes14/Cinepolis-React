@@ -38,6 +38,7 @@ export default function Cartelera() {
           {movies.map((movie) => (
             <Card
               key={movie.id}
+              id={movie.id}
               category={movie.category}
               title={movie.title}
               description={movie.description}
