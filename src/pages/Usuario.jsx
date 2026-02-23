@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "../firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
+
+import { Link } from "react-router-dom";
 
 export default function Usuario() {
   const [user, setUser] = useState(null);
@@ -55,7 +57,13 @@ export default function Usuario() {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Guardar el usuario en Firestore para poder listarlo en el dashboard
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          email: userCredential.user.email,
+          createdAt: new Date().toISOString(),
+          role: userCredential.user.email === "jarvyes@gmail.com" ? "admin" : "user"
+        });
       }
     } catch (error) {
       alert("Error: " + error.message);
@@ -160,11 +168,18 @@ export default function Usuario() {
 
           <div className="bg-[#15274D] p-6 rounded-xl">
             <h2 className="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Ajustes de Cuenta</h2>
-            <ul className="space-y-3">
+            <ul className="space-y-12">
               <li>
                 <button className="text-sm hover:text-amber-300 transition-colors">Editar Perfil</button>
               </li>
-              <li className="pt-4">
+              {user.email === "jarvyes@gmail.com" && (
+                <li>
+                  <Link to="/dashboard" className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+                    Dashboard de Administrador
+                  </Link>
+                </li>
+              )}
+              <li className="">
                 <button onClick={handleLogout} className="text-sm text-red-400 hover:text-red-300 transition-colors">Cerrar Sesión</button>
               </li>
             </ul>

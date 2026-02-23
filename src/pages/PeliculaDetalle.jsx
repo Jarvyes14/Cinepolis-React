@@ -1,19 +1,69 @@
-import { useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate, Navigate, useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function PeliculaDetalle() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id } = useParams();
   
-  // Recuperamos la película del estado de la navegación
-  const movie = location.state?.movie;
+  const [movie, setMovie] = useState(location.state?.movie || null);
+  const [loading, setLoading] = useState(!location.state?.movie);
 
-  // Si alguien entra a esta ruta directamente sin seleccionar película, lo regresamos a la cartelera
+  useEffect(() => {
+    const fetchMovie = async () => {
+      if (!movie && id) {
+        try {
+          const docRef = doc(db, "movies", id);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            setMovie({ id: docSnap.id, ...docSnap.data() });
+          } else {
+            console.log("No such document!");
+            navigate("/cartelera", { replace: true });
+          }
+        } catch (error) {
+          console.error("Error fetching movie:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (movie) {
+        // Si ya tenemos la película del state, pero queremos asegurarnos de tener los datos más recientes
+        // (opcional, pero útil si se editó en el dashboard recientemente)
+        try {
+          const docRef = doc(db, "movies", movie.id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setMovie({ id: docSnap.id, ...docSnap.data() });
+          }
+        } catch (error) {
+          console.error("Error updating movie data:", error);
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchMovie();
+  }, [id, navigate, movie?.id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white">
+        <p className="text-2xl">Cargando detalles de la película...</p>
+      </div>
+    );
+  }
+
   if (!movie) {
     return <Navigate to="/cartelera" replace />;
   }
 
-  // Horarios ficticios para la demostración
-  const horarios = ["14:30", "16:45", "19:00", "21:15", "23:30"];
+  // Usar horarios de la base de datos si existen, si no, usar los por defecto
+  const horarios = movie.horarios && movie.horarios.length > 0 
+    ? movie.horarios 
+    : ["14:30", "16:45", "19:00", "21:15", "23:30"];
 
   const handleSelectHorario = (horario) => {
     navigate(`/comprar/${movie.id}`, { 
@@ -23,6 +73,9 @@ export default function PeliculaDetalle() {
       } 
     });
   };
+
+  console.log("ID del trailer:", movie.trailer);
+  console.log("URL generada:", `https://www.youtube.com/embed/${movie.trailer}`);
 
   return (
     <div className="flex flex-col px-4 py-6 sm:px-8 sm:py-8 lg:px-10 items-center text-white">
@@ -72,19 +125,29 @@ export default function PeliculaDetalle() {
           </div>
         </div>
 
-        {/* Trailer (Simulado con un div o iframe de YouTube) */}
+        {/* Trailer */}
         <div className="mt-4">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Tráiler Oficial</h2>
-          <div className="w-full aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center border border-gray-700 relative group cursor-pointer">
-            {/* Aquí iría un iframe real de YouTube, por ahora ponemos un placeholder visual */}
-            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-              <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/50 group-hover:scale-110 transition-transform">
-                <div className="w-0 h-0 border-t-[15px] border-t-transparent border-l-[25px] border-l-white border-b-[15px] border-b-transparent ml-2"></div>
+          <div className="bg-black rounded-xl overflow-hidden flex items-center justify-center border border-gray-700 relative group aspect-video">
+            {movie.trailer ? (
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src={`https://www.youtube.com/embed/${movie.trailer}`} 
+                title={`Tráiler de ${movie.title}`}
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+                <div className="text-gray-500 flex flex-col items-center">
+                  <span className="text-4xl mb-2">🎬</span>
+                  <p>Tráiler no disponible</p>
+                </div>
               </div>
-            </div>
-            <p className="absolute bottom-4 left-4 text-white font-bold bg-black/50 px-3 py-1 rounded-lg">
-              Ver Tráiler - {movie.title}
-            </p>
+            )}
           </div>
         </div>
 

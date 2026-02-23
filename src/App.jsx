@@ -10,6 +10,7 @@ import Especialidades from "./pages/Especialidades.jsx";
 import Usuario from "./pages/Usuario.jsx";
 import CompraBoletos from "./pages/CompraBoletos.jsx";
 import PeliculaDetalle from "./pages/PeliculaDetalle.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/usuario" element={<Usuario />} />
             <Route path="/pelicula/:id" element={<PeliculaDetalle />} />
             <Route path="/comprar/:id" element={<CompraBoletos />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
         <Footer></Footer>

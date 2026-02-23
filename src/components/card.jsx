@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 
 // AI generated code
 
-export default function Card({ title, description, image, category, id }) {
+export default function Card({ title, description, image, category, id, horarios, trailer }) {
     return (
         <Link 
             to={`/pelicula/${id}`} 
-            state={{ movie: { id, title, description, image, category } }}
+            state={{ movie: { id, title, description, image, category, horarios, trailer } }}
             className="bg-[#05102A] w-full sm:w-72 rounded-2xl flex flex-col p-4 sm:p-5 hover:scale-105 transition-transform duration-300 cursor-pointer"
         >
             {image && (

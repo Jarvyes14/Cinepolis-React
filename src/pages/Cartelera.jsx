@@ -25,7 +25,6 @@ export default function Cartelera() {
 
   return (
     <div className="flex flex-col px-4 py-6 sm:px-8 sm:py-8 lg:px-10 items-center">
-      <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-6">Cartelera</h1>
       
       {loading ? (
         <p className="text-white">Cargando películas...</p>
@@ -43,6 +42,8 @@ export default function Cartelera() {
               title={movie.title}
               description={movie.description}
               image={movie.image}
+              horarios={movie.horarios}
+              trailer={movie.trailer}
             ></Card>
           ))}
         </div>
