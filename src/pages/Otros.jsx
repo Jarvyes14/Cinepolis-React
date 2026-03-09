@@ -1,46 +1,86 @@
-const elementos = [
-  {
-    titulo: "Promociones",
-    descripcion: "Descuentos semanales en boletos y combos seleccionados.",
-    imagen:
-      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    titulo: "Membresías",
-    descripcion: "Acumula puntos y obtén beneficios exclusivos en cada visita.",
-    imagen:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    titulo: "Preventas",
-    descripcion: "Compra entradas anticipadas para estrenos más esperados.",
-    imagen:
-      "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    titulo: "Formatos especiales",
-    descripcion: "Funciones en IMAX, 4DX y salas VIP para una mejor experiencia.",
-    imagen:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
-  },
-];
+import { useState, useEffect } from "react";
+import { auth, db } from "../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import CineFanMembership from "../components/otros/CineFanMembership";
+import FAQ from "../components/otros/FAQ";
+import SuggestionBox from "../components/otros/SuggestionBox";
 
 export default function Otros() {
+  // Estados para Membresía
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        try {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        setUserData(null);
+      }
+      setLoadingUser(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleJoinMembership = async () => {
+    if (!user) return;
+    try {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        membership: true,
+        points: 100, // Puntos de bienvenida
+        level: "Plata"
+      });
+      setUserData({ ...userData, membership: true, points: 100, level: "Plata" });
+      alert("¡Felicidades! Ahora eres miembro CineFan. Te hemos regalado 100 puntos de bienvenida.");
+    } catch (error) {
+      console.error("Error joining membership:", error);
+      alert("Hubo un error al procesar tu solicitud.");
+    }
+  };
+
   return (
-    <section className="px-4 py-6 sm:px-8 sm:py-8 lg:px-10 text-white">
-      <h1 className="text-2xl sm:text-3xl font-semibold">Otros</h1>
-      <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-        {elementos.map((elemento) => (
-          <article key={elemento.titulo} className="bg-[#05102A] rounded-xl p-4">
-            <img
-              src={elemento.imagen}
-              alt={elemento.titulo}
-              className="w-full h-40 rounded-lg object-cover mb-3"
-            />
-            <h2 className="text-xl font-semibold mb-2">{elemento.titulo}</h2>
-            <p className="text-white/85">{elemento.descripcion}</p>
-          </article>
-        ))}
+    <section className="px-4 py-6 sm:px-8 sm:py-8 lg:px-10 text-white max-w-6xl mx-auto">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-amber-400 border-b border-gray-700 pb-4">
+        Extras y Servicios
+      </h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        {/* COLUMNA IZQUIERDA */}
+        <div className="flex flex-col gap-8">
+          
+          {/* 1. SISTEMA DE MEMBRESÍAS */}
+          <CineFanMembership 
+            user={user} 
+            userData={userData} 
+            loadingUser={loadingUser} 
+            handleJoinMembership={handleJoinMembership} 
+          />
+
+          {/* 4. PREGUNTAS FRECUENTES (FAQ) */}
+          <FAQ />
+
+        </div>
+
+        {/* COLUMNA DERECHA */}
+        <div className="flex flex-col gap-8">
+          
+          {/* 5. BUZÓN DE QUEJAS Y SUGERENCIAS */}
+          <SuggestionBox user={user} />
+
+        </div>
       </div>
     </section>
   );

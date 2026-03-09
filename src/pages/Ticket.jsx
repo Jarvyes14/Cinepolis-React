@@ -46,7 +46,8 @@ export default function Ticket() {
     );
   }
 
-  const ticketUrl = window.location.href;
+  // Reemplazamos localhost por la IP local para que el QR funcione en otros dispositivos de la red
+  const ticketUrl = window.location.href.replace("localhost", "192.168.1.85");
 
   return (
     <div className="flex flex-col px-4 py-6 sm:px-8 sm:py-8 lg:px-10 items-center text-white min-h-screen">
